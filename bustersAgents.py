@@ -119,6 +119,40 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
     def chooseAction(self, gameState):
         return KeyboardAgent.getAction(self, gameState)
 
+    def printLineData(self, gameState):
+        #tick = self.countActions
+        # Map size
+        width, height = gameState.data.layout.width, gameState.data.layout.height
+        dimensionesMapa = width , height
+        # Pacman position
+        posicionPacman = gameState.getPacmanPosition()
+        # Legal actions for Pacman in current position
+        legalActions = gameState.getLegalPacmanActions()
+        # Pacman direction
+        direccionPacman = gameState.data.agentStates[0].getDirection()
+        # Number of ghosts
+        fantasmas = gameState.getNumAgents() - 1
+        # Alive ghosts (index 0 corresponds to Pacman and is always false)
+        fantasmasRestantes = gameState.getLivingGhosts()
+        # Ghosts positions
+        posicionFantasmas = gameState.getGhostPositions()
+        # Ghosts directions
+        direccionesFantasmas = [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]
+        # Manhattan distance to ghosts
+        distanciasFantasmas = gameState.data.ghostDistances
+        # Pending pac dots
+        pacdotsRestantes = gameState.getNumFood()
+        # Manhattan distance to the closest pac dot
+        distanciasPacdotMasCercano = gameState.getDistanceNearestFood()
+        # Score
+        score = gameState.getScore()
+
+        ##Abrimos el fichero y escribimos en el
+        string = dimensionesMapa , posicionPacman, legalActions, direccionPacman, fantasmas, fantasmasRestantes, posicionFantasmas, direccionesFantasmas, distanciasFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
+
+        return str(string)
+
+
 from distanceCalculator import Distancer
 from game import Actions
 from game import Directions
@@ -306,7 +340,6 @@ class BasicAgentAA(BustersAgent):
         elif Directions.SOUTH in legal: move = Directions.SOUTH
         return move
 
-
     def printLineData(self, gameState):
         tick = self.countActions
         # Map size
@@ -336,7 +369,6 @@ class BasicAgentAA(BustersAgent):
         score = gameState.getScore()
 
         ##Abrimos el fichero y escribimos en el
-        string1 = self.countActions, gameState.data.layout.width, gameState.data.layout.height, gameState.getPacmanPosition(), gameState.getLegalPacmanActions(), gameState.data.agentStates[0].getDirection(), gameState.getNumAgents() - 1, gameState.getGhostPositions(), [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)], gameState.data.ghostDistances, gameState.getNumFood(), gameState.getDistanceNearestFood(), gameState.getScore()
-        string = tick , dimensionesMapa , posicionPacman, legalActions, direccionPacman, fantasmas, fantasmasRestantes, posicionFantasmas, direccionesFantasmas, distanciasFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
+        string = dimensionesMapa , posicionPacman, legalActions, direccionPacman, fantasmas, fantasmasRestantes, posicionFantasmas, direccionesFantasmas, distanciasFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
 
-        return str(string1) + "\n"
+        return str(string)

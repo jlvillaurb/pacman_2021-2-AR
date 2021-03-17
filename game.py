@@ -717,7 +717,29 @@ class Game(object):
             ##PRINT LINE DATA
             ##Solo se ejecuta cuando es el turno del Pacman, agentIndex == 0
             if(agentIndex == 0):
+                #if (os.stat('./file.txt').st_size==0): self.output_file.write('line')
+                """    ('@relation output_tutorial1.arff \n @attribute p_x numeric \n @attribute p_y numeric \n'
+                    @attribute p_direction {Stop,East,West,South,North} 
+                    @attribute legal_north {None,North} 
+                    @attribute legal_south {None,South} 
+                    @attribute legal_east {None,East} 
+                    @attribute legal_west {None,West} 
+                    @attribute g_manhattan numeric 
+                    @attribute g_x numeric 
+                    @attribute g_y numeric 
+                    @attribute pending_ghosts numeric 
+                    @attribute closest_dot numeric 
+                    @attribute pending_dots numeric 
+                    @attribute score numeric 
+                    @attribute action {Stop,East,West,South,North} 
+                    @data')"""
+
                 line = agent.printLineData(self.state)
+                line = line.replace('(', '')
+                line = line.replace(')', '')
+                line = line.replace('[', '')
+                line = line.replace(']', '')
+                line = line.replace('\'', '')
                 self.output_file.write(line)
 
 

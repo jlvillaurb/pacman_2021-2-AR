@@ -332,10 +332,11 @@ class BasicAgentAA(BustersAgent):
         pacdotsRestantes = gameState.getNumFood()
         # Manhattan distance to the closest pac dot
         distanciasPacdotMasCercano = gameState.getDistanceNearestFood()
-        # Map walls
-        #mapa = str(gameState.getWalls())
+        # Score
+        gameState.getScore()
 
         ##Abrimos el fichero y escribimos en el
+        string1 = self.countActions, gameState.data.layout.width, gameState.data.layout.height, gameState.getPacmanPosition(), gameState.getLegalPacmanActions(), gameState.data.agentStates[0].getDirection(), gameState.getNumAgents() - 1, gameState.getGhostPositions(), [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)], gameState.data.ghostDistances, gameState.getNumFood(), gameState.getDistanceNearestFood(), gameState.getScore()
         string = tick , dimensionesMapa , posicionPacman, legalActions, direccionPacman, fantasmas, fantasmasRestantes, posicionFantasmas, direccionesFantasmas, distanciasFantasmas, pacdotsRestantes, distanciasPacdotMasCercano
 
-        return str(string) + "\n"
+        return str(string1) + "\n"

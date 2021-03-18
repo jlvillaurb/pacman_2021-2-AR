@@ -537,10 +537,7 @@ class Game(object):
         self.agentTimeout = False
         import io
         self.agentOutput = [io.StringIO() for agent in agents]
-        self.output_file = open("file.txt", 'a')
 
-    def __del__(self):
-        self.output_file.close()
 
     def getProgress(self):
         if self.gameOver:
@@ -717,14 +714,17 @@ class Game(object):
             ##PRINT LINE DATA
             ##Solo se ejecuta cuando es el turno del Pacman, agentIndex == 0
             if(agentIndex == 0):
-                #if (os.stat("file.txt").st_size==0): self.output_file.write('line')
-                """('@relation output_tutorial1.arff\n@attribute pacman_x numeric\n@attribute pacman_y numeric\n'
-                    '@attribute pacman_direction {Stop,East,West,South,North}\n@attribute legal_north {None,North}\n@attribute legal_south {None,South}\n'
-                    '@attribute legal_east {None,East}\n@attribute legal_west {None,West}\n@attribute ghost_manhattan numeric\n'                   
-                    '@attribute ghosts_x numeric\n@attribute ghosts_y numeric \n @attribute pending_ghosts numeric\n'
-                    '@attribute closest_dot numeric\n@attribute dots_left numeric\n@attribute score numeric\n'
-                    '@attribute next_action {Stop,East,West,South,North}\n@data\n')"""
+                if (os.path.isfile("file.arff")==False):
+                    output_file = open("file.arff", 'w')
+                    output_file.write('@relation tutorial3.arff\n\n@attribute pacman_x numeric\n@attribute pacman_y numeric\n' +
+                    '@attribute legal_north {None,North}\n@attribute legal_south {None,South}\n@attribute legal_east {None,East}\n' +
+                    '@attribute legal_west {None,West}\n@attribute pacman_direction {Stop,East,West,South,North}\n@attribute ghost_manhattan numeric\n' +
+                    '@attribute ghosts_x numeric\n@attribute ghosts_y numeric\n@attribute pending_ghosts numeric\n' +
+                    '@attribute closest_dot numeric\n@attribute dots_left numeric\n@attribute score numeric\n' +
+                    '@attribute next_action {Stop,East,West,South,North}\n\n@data\n')
+                    output_file.close()
 
+                output_file = open("file.arff", 'a')
                 line = agent.printLineData(self.state)
                 line = line + ', ' + str(action) + '\n'
                 line = line.replace('(', '')
@@ -732,8 +732,9 @@ class Game(object):
                 line = line.replace('[', '')
                 line = line.replace(']', '')
                 line = line.replace('\'', '')
-                self.output_file.write(line)
-
+                output_file.write(line)
+                
+                output_file.close()
 
             # Change the display
             self.display.update( self.state.data )

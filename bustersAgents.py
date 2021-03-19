@@ -128,10 +128,20 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         posicionPacman = gameState.getPacmanPosition()
         # Legal actions for Pacman in current position
         legalActions = gameState.getLegalPacmanActions()
+        legal = ['None', 'None', 'None', 'None']
+        if legalActions != None :
+            for x in range(len(legalActions)):
+                if str(legalActions[x]) == 'North': legal[0]='North'
+                if str(legalActions[x]) == 'South': legal[1]='South'
+                if str(legalActions[x]) == 'East': legal[2]='East'
+                if str(legalActions[x]) == 'West': legal[3]='West'
+            legalActions = legal
+        if legalActions == None :
+            legalActions = ['None', 'None', 'None', 'None']
         # Pacman direction
-        direccionPacman = gameState.data.agentStates[0].getDirection()
+        direccionPacman = str(gameState.data.agentStates[0].getDirection())
         # Number of ghosts
-        fantasmas = gameState.getNumAgents() - 1
+        numfantasmas = gameState.getNumAgents() - 1
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         fantasmasRestantes = gameState.getLivingGhosts()
         # Ghosts positions
@@ -139,7 +149,8 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         # Ghosts directions
         direccionesFantasmas = [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)]
         # Manhattan distance to ghosts
-        distanciasFantasmas = gameState.data.ghostDistances
+        distanciasFantasmas = str(gameState.data.ghostDistances)
+        distanciasFantasmas = distanciasFantasmas.replace('None', '100')
         # Pending pac dots
         pacdotsRestantes = gameState.getNumFood()
         # Manhattan distance to the closest pac dot
@@ -148,7 +159,7 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         score = gameState.getScore()
 
         ##Abrimos el fichero y escribimos en el
-        string = dimensionesMapa , posicionPacman, legalActions, direccionPacman, fantasmas, fantasmasRestantes, posicionFantasmas, direccionesFantasmas, distanciasFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
+        string = posicionPacman, legalActions, direccionPacman, fantasmasRestantes, distanciasFantasmas, posicionFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
 
         return str(string)
 

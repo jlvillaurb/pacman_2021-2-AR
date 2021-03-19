@@ -718,10 +718,11 @@ class Game(object):
                     output_file = open("file.arff", 'w')
                     output_file.write('@relation tutorial3.arff\n\n@attribute pacman_x numeric\n@attribute pacman_y numeric\n' +
                     '@attribute legal_north {None,North}\n@attribute legal_south {None,South}\n@attribute legal_east {None,East}\n' +
-                    '@attribute legal_west {None,West}\n@attribute pacman_direction {Stop,East,West,South,North}\n@attribute ghost_manhattan numeric\n' +
-                    '@attribute ghosts_x numeric\n@attribute ghosts_y numeric\n@attribute pending_ghosts numeric\n' +
-                    '@attribute closest_dot numeric\n@attribute dots_left numeric\n@attribute score numeric\n' +
-                    '@attribute next_action {Stop,East,West,South,North}\n\n@data\n')
+                    '@attribute legal_west {None,West}\n@attribute pacman_direction {Stop,East,West,South,North}\n@attribute borrar2 {True,False}\n@attribute remaining_ghost1 {True,False}\n' +
+                    '@attribute remaining_ghost2 {True,False}\n@attribute remaining_ghost3 {True,False}\n@attribute remaining_ghost4 {True,False}\n@attribute distance_ghost1 numeric\n' +
+                    '@attribute distance_ghost2 numeric\n@attribute distance_ghost3 numeric\n@attribute distance_ghost4 numeric\n@attribute ghost1_x numeric\n@attribute ghost1_y numeric\n' +
+                    '@attribute ghost2_x numeric\n@attribute ghost2_y numeric\n@attribute ghost3_x numeric\n@attribute ghost3_y numeric\n@attribute ghost4_x numeric\n@attribute ghost4_y numeric\n' +
+                    '@attribute dots_left numeric\n@attribute closest_dot numeric\n@attribute score numeric\n@attribute next_action {Stop,East,West,South,North}\n\n@data\n')
                     output_file.close()
 
                 output_file = open("file.arff", 'a')

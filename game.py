@@ -722,19 +722,25 @@ class Game(object):
                     '@attribute ghost2_alive {True,False}\n@attribute ghost3_alive {True,False}\n@attribute ghost4_alive {True,False}\n@attribute distance_ghost1 numeric\n' +
                     '@attribute distance_ghost2 numeric\n@attribute distance_ghost3 numeric\n@attribute distance_ghost4 numeric\n@attribute ghost1_x numeric\n@attribute ghost1_y numeric\n' +
                     '@attribute ghost2_x numeric\n@attribute ghost2_y numeric\n@attribute ghost3_x numeric\n@attribute ghost3_y numeric\n@attribute ghost4_x numeric\n@attribute ghost4_y numeric\n' +
-                    '@attribute dots_left numeric\n@attribute closest_dot numeric\n@attribute score numeric\n@attribute next_action {Stop,East,West,South,North}\n\n@data\n')
+                    '@attribute dots_left numeric\n@attribute closest_dot numeric\n@attribute score numeric\n@attribute next_action {Stop,East,West,South,North}\n@attribute next_score numeric\n\n@data\n')
                     output_file.close()
 
                 output_file = open("file.arff", 'a')
+               
+                #Guardamos el score de esta instancia en la instancia anterior
+                line = ', ' + agent.printNextScore(self.state) + '\n'
+                output_file.write(line)
+
+                #Escribimos los datos de la instancia
                 line = agent.printLineData(self.state)
-                line = line + ', ' + str(action) + '\n'
+                line = line + ', ' + str(action)
                 line = line.replace('(', '')
                 line = line.replace(')', '')
                 line = line.replace('[', '')
                 line = line.replace(']', '')
                 line = line.replace('\'', '')
                 output_file.write(line)
-                
+
                 output_file.close()
 
             # Change the display

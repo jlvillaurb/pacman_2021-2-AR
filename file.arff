@@ -1,0 +1,39 @@
+@relation tutorial3.arff
+
+@attribute pacman_x numeric
+@attribute pacman_y numeric
+@attribute legal_north {None,North}
+@attribute legal_south {None,South}
+@attribute legal_east {None,East}
+@attribute legal_west {None,West}
+@attribute pacman_direction {Stop,East,West,South,North}
+@attribute borrar2 {True,False}
+@attribute ghost1_alive {True,False}
+@attribute ghost2_alive {True,False}
+@attribute ghost3_alive {True,False}
+@attribute ghost4_alive {True,False}
+@attribute distance_ghost1 numeric
+@attribute distance_ghost2 numeric
+@attribute distance_ghost3 numeric
+@attribute distance_ghost4 numeric
+@attribute ghost1_x numeric
+@attribute ghost1_y numeric
+@attribute ghost2_x numeric
+@attribute ghost2_y numeric
+@attribute ghost3_x numeric
+@attribute ghost3_y numeric
+@attribute ghost4_x numeric
+@attribute ghost4_y numeric
+@attribute dots_left numeric
+@attribute closest_dot numeric
+@attribute score numeric
+@attribute next_action {Stop,East,West,South,North}
+@attribute next_score numeric
+
+@data
+, 99
+8, 3, None, None, East, West, West, False, True, True, True, True, 7, 4, 7, 18, 3, 5, 8, 7, 11, 7, 18, 11, 94, 1, 99, West, 98
+9, 3, None, None, East, West, East, False, True, True, True, True, 7, 5, 6, 17, 4, 5, 8, 7, 11, 7, 18, 11, 94, 1, 98, East, 97
+8, 3, None, None, East, West, West, False, True, True, True, True, 6, 5, 6, 17, 4, 5, 9, 7, 10, 7, 17, 11, 94, 1, 97, West, 196
+7, 3, None, None, East, West, West, False, True, True, True, True, 4, 7, 8, 19, 5, 5, 10, 7, 10, 8, 18, 11, 93, 1, 196, West, 295
+6, 3, North, None, East, None, West, False, True, True, True, True, 4, 7, 8, 20, 4, 5, 9, 7, 9, 8, 18, 11, 92, 1, 295, West

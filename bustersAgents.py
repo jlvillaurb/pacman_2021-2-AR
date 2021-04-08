@@ -153,11 +153,10 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
         distanciasFantasmas = str(gameState.data.ghostDistances)
         distanciasFantasmas = distanciasFantasmas.replace('None', '1000')
         # Pending pac dots
-        pacdotsRestantes = str(gameState.getNumFood())
-        pacdotsRestantes = pacdotsRestantes.replace('None', '1000')
+        pacdotsRestantes = gameState.getNumFood()
         # Manhattan distance to the closest pac dot
         distanciasPacdotMasCercano = gameState.getDistanceNearestFood()
-        #if distanciasPacdotMasCercano == None: distanciasPacdotMasCercano=1000
+        if distanciasPacdotMasCercano == None: distanciasPacdotMasCercano=1000
         # Score
         score = gameState.getScore()
 
@@ -405,11 +404,10 @@ class BasicAgentAA(BustersAgent):
         distanciasFantasmas = str(gameState.data.ghostDistances)
         distanciasFantasmas = distanciasFantasmas.replace('None', '1000')
         # Pending pac dots
-        pacdotsRestantes = str(gameState.getNumFood())
-        pacdotsRestantes = pacdotsRestantes.replace('None', '1000')
+        pacdotsRestantes = gameState.getNumFood()
         # Manhattan distance to the closest pac dot
         distanciasPacdotMasCercano = gameState.getDistanceNearestFood()
-        #if distanciasPacdotMasCercano == None: distanciasPacdotMasCercano=1000
+        if distanciasPacdotMasCercano == None: distanciasPacdotMasCercano=1000
         # Score
         score = gameState.getScore()
 

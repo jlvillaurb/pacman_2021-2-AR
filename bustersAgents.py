@@ -15,6 +15,7 @@ from __future__ import print_function
 
 from builtins import range
 from builtins import object
+from random import *
 import util
 from game import Agent
 from game import Directions
@@ -257,6 +258,10 @@ class BasicAgentAA(BustersAgent):
         BustersAgent.registerInitialState(self, gameState)
         self.distancer = Distancer(gameState.data.layout, False)
         self.countActions = 0
+
+        self.NewDir = 'X'
+        self.LastDir = 'Y'
+        self.Last2Dir = 'Z'
         
     ''' Example of counting something'''
     def countFood(self, gameState):
@@ -325,7 +330,6 @@ class BasicAgentAA(BustersAgent):
             ghostPosition = gameState.getGhostPositions()[i]
             if gameState.data.ghostDistances[i] != None: print("---> posicion fantasma: " + str(ghostPosition[0]) + " " + str(ghostPosition[1]))
             """
-
             if gameState.data.ghostDistances[i] != None and closestGhostDistance > gameState.data.ghostDistances[i]: 
                 closestGhost = i
                 closestGhostDistance = gameState.data.ghostDistances[i]
@@ -335,20 +339,74 @@ class BasicAgentAA(BustersAgent):
         north_south = ghostPosition[1] - pacmanPosition[1]
         west_east = ghostPosition[0] - pacmanPosition[0]
 
-        if north_south == 0 and west_east > 0 and Directions.EAST in legal: move = Directions.EAST
-        elif north_south == 0 and west_east < 0 and Directions.WEST in legal: move = Directions.WEST
-        elif west_east == 0 and north_south > 0 and Directions.NORTH in legal: move = Directions.NORTH
-        elif west_east == 0 and north_south < 0 and Directions.SOUTH in legal: move = Directions.SOUTH
+        if north_south == 0 and west_east > 0 and Directions.EAST in legal: 
+            move = Directions.EAST
+            NewDir = 'E'
+        elif north_south == 0 and west_east < 0 and Directions.WEST in legal: 
+            move = Directions.WEST
+            NewDir = 'W'
+        elif west_east == 0 and north_south > 0 and Directions.NORTH in legal: 
+            move = Directions.NORTH
+            NewDir = 'N'
+        elif west_east == 0 and north_south < 0 and Directions.SOUTH in legal: 
+            move = Directions.SOUTH
+            NewDir = 'S'
 
-        elif north_south > 0 and north_south >= abs(west_east) and Directions.NORTH in legal: move = Directions.NORTH
-        elif north_south < 0 and abs(north_south) >= abs(west_east) and Directions.SOUTH in legal: move = Directions.SOUTH
-        elif west_east > 0 and west_east >= abs(north_south) and Directions.EAST in legal: move = Directions.EAST
-        elif west_east < 0 and abs(west_east) >= abs(north_south) and Directions.WEST in legal: move = Directions.WEST
+        elif north_south > 0 and north_south >= abs(west_east) and Directions.NORTH in legal: 
+            move = Directions.NORTH
+            NewDir = 'N'
+        elif north_south < 0 and abs(north_south) >= abs(west_east) and Directions.SOUTH in legal: 
+            move = Directions.SOUTH
+            NewDir = 'S'
+        elif west_east > 0 and west_east >= abs(north_south) and Directions.EAST in legal: 
+            move = Directions.EAST
+            NewDir = 'E'
+        elif west_east < 0 and abs(west_east) >= abs(north_south) and Directions.WEST in legal: 
+            move = Directions.WEST
+            NewDir = 'W'
 
-        elif Directions.EAST in legal: move = Directions.EAST
-        elif Directions.WEST in legal: move = Directions.WEST
-        elif Directions.NORTH in legal: move = Directions.NORTH
-        elif Directions.SOUTH in legal: move = Directions.SOUTH
+        elif north_south < west_east and north_south>0 and self.NewDir!='N' and Directions.NORTH in legal: move = Directions.NORTH 
+        elif north_south < west_east and north_south<0 and self.NewDir!='S' and Directions.SOUTH in legal: move = Directions.SOUTH 
+        elif north_south > west_east and west_east>0 and self.NewDir!='E' and Directions.EAST in legal: move = Directions.EAST 
+        elif north_south > west_east and west_east<0 and self.NewDir!='W' and Directions.WEST in legal: move = Directions.WEST 
+
+        elif Directions.EAST in legal: 
+            move = Directions.EAST
+            NewDir = 'E'
+        elif Directions.WEST in legal: 
+            move = Directions.WEST
+            NewDir = 'W'
+        elif Directions.NORTH in legal: 
+            move = Directions.NORTH
+            NewDir = 'N'
+        elif Directions.SOUTH in legal: 
+            move = Directions.SOUTH
+            NewDir = 'S'
+
+        #En caso de que se repita un movimiento sucesivamente se prueba con otro aleatorio
+        if self.NewDir == self.Last2Dir:            
+
+                for i in range(0, 50):
+                    rnd = randint(1,4)
+                    if rnd == 1 and NewDir!='N' and Directions.NORTH in legal: 
+                        move = Directions.NORTH 
+                        break
+                    if rnd == 2 and NewDir!='S' and Directions.SOUTH in legal: 
+                        move = Directions.SOUTH
+                        break
+                    if rnd == 3 and NewDir!='E' and Directions.EAST in legal: 
+                        move = Directions.EAST
+                        break
+                    if rnd == 4 and NewDir!='W' and Directions.WEST in legal: 
+                        move = Directions.WEST
+                        break
+        else:
+            self.Last2Dir=self.LastDir
+            return move
+
+        self.Last2Dir=self.LastDir
+        self.LastDir=self.NewDir
+
         return move
 
     def printLineData(self, gameState):

@@ -694,23 +694,6 @@ class Game(object):
             else:
                 action = agent.getAction(observation)
             self.unmute()
-
-            # Execute the action
-            self.moveHistory.append( (agentIndex, action) )
-            if self.catchExceptions:
-                try:
-                    self.state = self.state.generateSuccessor( agentIndex, action )
-                except Exception as data:
-                    self.mute(agentIndex)
-                    self._agentCrash(agentIndex)
-                    self.unmute()
-                    return
-            else:
-                self.state = self.state.generateSuccessor( agentIndex, action )
-
-
-
-
             ##PRINT LINE DATA
             ##Solo se ejecuta cuando es el turno del Pacman, agentIndex == 0
             if(agentIndex == 0):
@@ -742,6 +725,19 @@ class Game(object):
                 output_file.write(line)
 
                 output_file.close()
+
+            # Execute the action
+            self.moveHistory.append( (agentIndex, action) )
+            if self.catchExceptions:
+                try:
+                    self.state = self.state.generateSuccessor( agentIndex, action )
+                except Exception as data:
+                    self.mute(agentIndex)
+                    self._agentCrash(agentIndex)
+                    self.unmute()
+                    return
+            else:
+                self.state = self.state.generateSuccessor( agentIndex, action )
 
             # Change the display
             self.display.update( self.state.data )

@@ -12,7 +12,7 @@ from __future__ import print_function
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
+from wekaI import Weka
 from builtins import range
 from builtins import object
 from random import *
@@ -75,6 +75,11 @@ class BustersAgent(object):
         self.inferenceModules = [inferenceType(a) for a in ghostAgents]
         self.observeEnable = observeEnable
         self.elapseTimeEnable = elapseTimeEnable
+
+        #Para el uso de Weka
+        self.weka = Weka()
+        self.weka.start_jvm()
+
 
     def registerInitialState(self, gameState):
         "Initializes beliefs and inference modules"
@@ -166,7 +171,7 @@ class BustersKeyboardAgent(BustersAgent, KeyboardAgent):
 
     def printNextScore(self, gameState):
         score = int(gameState.getScore())
-        if score == -1: score = 5000
+        if score == -1: score = 3000
         return str(score)
 
 from distanceCalculator import Distancer
@@ -325,11 +330,13 @@ class BasicAgentAA(BustersAgent):
         closestGhost = 0
         closestGhostDistance = 100
 
+        #Algoritmo de movimiento 
+
         for i in range(0, gameState.getNumAgents()-1):
-            """
-            ghostPosition = gameState.getGhostPositions()[i]
-            if gameState.data.ghostDistances[i] != None: print("---> posicion fantasma: " + str(ghostPosition[0]) + " " + str(ghostPosition[1]))
-            """
+            
+            #ghostPosition = gameState.getGhostPositions()[i]
+            #if gameState.data.ghostDistances[i] != None: print("---> posicion fantasma: " + str(ghostPosition[0]) + " " + str(ghostPosition[1]))
+            
             if gameState.data.ghostDistances[i] != None and closestGhostDistance > gameState.data.ghostDistances[i]: 
                 closestGhost = i
                 closestGhostDistance = gameState.data.ghostDistances[i]
@@ -369,6 +376,7 @@ class BasicAgentAA(BustersAgent):
                 if Directions.SOUTH in legal and rnd==4: 
                     move = Directions.SOUTH
                     break
+
         return move
 
     def printLineData(self, gameState):
@@ -396,6 +404,13 @@ class BasicAgentAA(BustersAgent):
         numfantasmas = gameState.getNumAgents() - 1
         # Alive ghosts (index 0 corresponds to Pacman and is always false)
         fantasmasRestantes = gameState.getLivingGhosts()
+        restantes = [False, False, False, False]
+        if fantasmasRestantes != None :
+            if str(fantasmasRestantes[1]) == True: restantes[0]=True
+            if str(fantasmasRestantes[2]) == True: restantes[1]=True
+            if str(fantasmasRestantes[3]) == True: restantes[2]=True
+            if str(fantasmasRestantes[4]) == True: restantes[3]=True    
+        
         # Ghosts positions
         posicionFantasmas = gameState.getGhostPositions()
         # Ghosts directions
@@ -412,11 +427,182 @@ class BasicAgentAA(BustersAgent):
         score = gameState.getScore()
 
         ##Abrimos el fichero y escribimos en el
-        string = posicionPacman, legalActions, direccionPacman, fantasmasRestantes, distanciasFantasmas, posicionFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
+        string = posicionPacman, legalActions, direccionPacman, restantes, distanciasFantasmas, posicionFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
 
         return str(string)
 
     def printNextScore(self, gameState):
         score = int(gameState.getScore())
-        if score == -1: score = 5000
+        if score == -1: score = 3000
+        return str(score)
+
+
+class BasicAgentWeka(BustersAgent):
+    def registerInitialState(self, gameState):
+        BustersAgent.registerInitialState(self, gameState)
+        self.distancer = Distancer(gameState.data.layout, False)
+        self.countActions = 0
+        
+    ''' Example of counting something'''
+    def countFood(self, gameState):
+        food = 0
+        for width in gameState.data.food:
+            for height in width:
+                if(height == True):
+                    food = food + 1
+        return food
+    
+    ''' Print the layout'''  
+    def printGrid(self, gameState):
+        table = ""
+        #print(gameState.data.layout) ## Print by terminal
+        for x in range(gameState.data.layout.width):
+            for y in range(gameState.data.layout.height):
+                food, walls = gameState.data.food, gameState.data.layout.walls
+                table = table + gameState.data._foodWallStr(food[x][y], walls[x][y]) + ","
+        table = table[:-1]
+        return table
+
+    def printInfo(self, gameState):
+        print("---------------- TICK ", self.countActions, " --------------------------")
+        # Map size
+        width, height = gameState.data.layout.width, gameState.data.layout.height
+        print("Width: ", width, " Height: ", height)
+        # Pacman position
+        print("Pacman position: ", gameState.getPacmanPosition())
+        # Legal actions for Pacman in current position
+        print("Legal actions: ", gameState.getLegalPacmanActions())
+        # Pacman direction
+        print("Pacman direction: ", gameState.data.agentStates[0].getDirection())
+        # Number of ghosts
+        print("Number of ghosts: ", gameState.getNumAgents() - 1)
+        # Alive ghosts (index 0 corresponds to Pacman and is always false)
+        print("Living ghosts: ", gameState.getLivingGhosts())
+        # Ghosts positions
+        print("Ghosts positions: ", gameState.getGhostPositions())
+        # Ghosts directions
+        print("Ghosts directions: ", [gameState.getGhostDirections().get(i) for i in range(0, gameState.getNumAgents() - 1)])
+        # Manhattan distance to ghosts
+        print("Ghosts distances: ", gameState.data.ghostDistances)
+        # Pending pac dots
+        print("Pac dots: ", gameState.getNumFood())
+        # Manhattan distance to the closest pac dot
+        print("Distance nearest pac dots: ", gameState.getDistanceNearestFood())
+        # Map walls
+        print("Map:")
+        print( gameState.getWalls())
+        # Score
+        print("Score: ", gameState.getScore())
+        
+        
+    def chooseAction(self, gameState):
+        self.countActions = self.countActions + 1
+        self.printInfo(gameState)
+        move = Directions.STOP
+        legal = gameState.getLegalActions(0) ##Legal position from the pacman
+
+        pacmanPosition = gameState.getPacmanPosition()
+        closestGhost = 0
+        closestGhostDistance = 100
+
+        """
+        ##Datos de la istancia
+        posicionPacman = gameState.getPacmanPosition()
+        legalActions = gameState.getLegalPacmanActions()
+        legal = ['None', 'None', 'None', 'None']
+        if legalActions != None :
+            for x in range(len(legalActions)):
+                if str(legalActions[x]) == 'North': legal[0]='North'
+                if str(legalActions[x]) == 'South': legal[1]='South'
+                if str(legalActions[x]) == 'East': legal[2]='East'
+                if str(legalActions[x]) == 'West': legal[3]='West'
+            legalActions = legal
+        if legalActions == None :
+            legalActions = ['None', 'None', 'None', 'None']
+        direccionPacman = str(gameState.data.agentStates[0].getDirection())
+        posicionFantasmas = gameState.getGhostPositions()
+        pacdotsRestantes = gameState.getNumFood()
+        distanciasPacdotMasCercano = gameState.getDistanceNearestFood()
+        if distanciasPacdotMasCercano == None: distanciasPacdotMasCercano=1000
+        score = gameState.getScore()
+        #Para incluir solo 4 datos, no los 5
+        fantasmasRestantes = gameState.getLivingGhosts()
+        restantes = [False, False, False, False]
+        if fantasmasRestantes != None :
+            if str(fantasmasRestantes[1]) == True: restantes[0]=True
+            if str(fantasmasRestantes[2]) == True: restantes[1]=True
+            if str(fantasmasRestantes[3]) == True: restantes[2]=True
+            if str(fantasmasRestantes[4]) == True: restantes[3]=True      
+        #distancia a los fantasmas
+        distanciasFantasmas = str(gameState.data.ghostDistances)
+        distanciasFantasmas = distanciasFantasmas.replace('None', '1000')
+        ##Abrimos el fichero y escribimos en el
+        line = posicionPacman, legalActions, direccionPacman, restantes, distanciasFantasmas, posicionFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
+        """
+        line = self.printLineData(gameState)
+        print(line)
+        line = str(line)
+        line = line.replace('(', '')
+        line = line.replace(')', '')
+        line = line.replace('[', '')
+        line = line.replace(']', '')
+        line = line.replace('\'', '')
+        line = line.replace(' ', '')
+        line = line.split(",")
+        print(line)
+
+        move = self.weka.predict("J48.model", line, "train_tutorial1.arff")
+
+        if (not move in gameState.getLegalPacmanActions() or move == Directions.STOP):
+            move = gameState.getLegalPacmanActions()[random.randint(0,len(gameState.getLegalPacmanActions())-1)]
+
+        return move
+
+    def printLineData(self, gameState):
+        # Pacman position
+        posicionPacman = gameState.getPacmanPosition()
+        # Legal actions for Pacman in current position
+        legalActions = gameState.getLegalPacmanActions()
+        legal = ['None', 'None', 'None', 'None']
+        if legalActions != None :
+            for x in range(len(legalActions)):
+                if str(legalActions[x]) == 'North': legal[0]='North'
+                if str(legalActions[x]) == 'South': legal[1]='South'
+                if str(legalActions[x]) == 'East': legal[2]='East'
+                if str(legalActions[x]) == 'West': legal[3]='West'
+            legalActions = legal
+        if legalActions == None :
+            legalActions = ['None', 'None', 'None', 'None']
+        # Pacman direction
+        direccionPacman = str(gameState.data.agentStates[0].getDirection())
+        # Alive ghosts (index 0 corresponds to Pacman and is always false)
+        fantasmasRestantes = gameState.getLivingGhosts()
+        restantes = [False, False, False, False]
+        if fantasmasRestantes != None :
+            if str(fantasmasRestantes[1]) == True: restantes[0]=True
+            if str(fantasmasRestantes[2]) == True: restantes[1]=True
+            if str(fantasmasRestantes[3]) == True: restantes[2]=True
+            if str(fantasmasRestantes[4]) == True: restantes[3]=True    
+        
+        # Ghosts positions
+        posicionFantasmas = gameState.getGhostPositions()
+        # Manhattan distance to ghosts
+        distanciasFantasmas = str(gameState.data.ghostDistances)
+        distanciasFantasmas = distanciasFantasmas.replace('None', '1000')
+        # Pending pac dots
+        pacdotsRestantes = gameState.getNumFood()
+        # Manhattan distance to the closest pac dot
+        distanciasPacdotMasCercano = gameState.getDistanceNearestFood()
+        if distanciasPacdotMasCercano == None: distanciasPacdotMasCercano=1000
+        # Score
+        score = gameState.getScore()
+
+        ##Abrimos el fichero y escribimos en el
+        string = posicionPacman, legalActions, restantes, distanciasFantasmas, posicionFantasmas, pacdotsRestantes, distanciasPacdotMasCercano, score
+
+        return str(string)
+
+    def printNextScore(self, gameState):
+        score = int(gameState.getScore())
+        if score == -1: score = 3000
         return str(score)
